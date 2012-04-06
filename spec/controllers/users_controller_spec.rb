@@ -20,13 +20,24 @@ describe UsersController do
         response.should have_selector("h1", :content => @user.name)
       end
 
-       it "should have a profile image" do
-         get :show, :id => @user
-         response.should have_selector("h1>img", :class => "gravatar")
-       end
-     #end
+      it "should have a profile image" do
+        get :show, :id => @user
+        response.should have_selector("h1>img", :class => "gravatar")
+      end
+     
+      it "should have a name field" do
+        get :new
+        response.should have_selector("input[name='user[name]'][type='text']")
+      end
 
-     it "should be successful" do
+      it "should have an email field"
+
+      it "should have a password field"
+    
+      it "should have a password confirmation field"
+      end
+
+      it "should be successful" do
        get 'new'
        response.should be_success
       end
@@ -79,7 +90,12 @@ describe "POST 'create'" do
       post :create, :user => @attr
       response.should redirect_to(user_path(assigns(:user)))
      end
-   
+    
+     it "should sign the user in" do
+       post :create, :user => @attr
+       controller.should be_signed_in
+     end
+
      it "should have a welcome message" do
        post :create, :user => @attr
        flash[:success].should =~ /welcome to the sample app/i
@@ -87,5 +103,5 @@ describe "POST 'create'" do
     end
   end
 end
-
+end
 

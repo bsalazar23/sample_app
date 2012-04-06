@@ -28,6 +28,11 @@ attr_accessible :name, :email, :password, :password_confirmation
     return user if user.has_password?(submitted_password)
  end
 
+ def self.authenticate_with_salt(id, cookie_salt)
+   user = find_by_id(id)
+   (user && user.salt == cookie_salt) ? user : nil
+ end
+ 
  private
 
 
@@ -48,4 +53,5 @@ attr_accessible :name, :email, :password, :password_confirmation
      Digest::SHA2.hexdigest(string)
    end
 end
+#end
 
