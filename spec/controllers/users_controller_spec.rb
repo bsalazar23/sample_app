@@ -11,7 +11,8 @@ describe UsersController do
          response.should redirect_to (signin_path)
          flash[:notice].should =~ /sign in/i
       end
-
+     #end
+     
      describe "for signed-in users" do
    
        before(:each) do
@@ -19,12 +20,13 @@ describe UsersController do
          second = Factory(:user, :name => "Bob", :email => "another@example.com")
          third  = Factory(:user, :name => "Ben", :email => "another@example.net")
 
-         @users = [@user, second, third]
-         30.times do
-           @users << Factory(:user, :name => Factory.next(:name),
-                                    :email => Factory.next(:email))
-         end
+        @users = [@user, second, third]
+        30.times do
+          @users << Factory(:user, :name => Factory.next(:name),
+                                   :email => Factory.next(:email))
+        end
       end
+
     
       it "should be successful" do
         get :index
@@ -40,18 +42,17 @@ describe UsersController do
         get :index
         @users[0..2].each do |user|
           response.should have_selector("li", :content => user.name)
-       end
       end
-    #end
-   #end
+    end
+    
      it "should paginate users" do
-       get :index
-       response.should have_selector("div.pagination")
-       response.should have_selector("span.disabled", :content => "Previous")
-       response.should have_selector("a", :href => "/users?page=2",
-                                          :content => "2")
-       response.should have_selector("a", :href => "/users?page=2",
-                                          :content => "Next")
+        get :index
+        response.should have_selector("div.pagination")
+        response.should have_selector("span.disabled", :content => "Previous")
+        response.should have_selector("a", :href => "/users?page=2",
+                                           :content => "2")
+        response.should have_selector("a", :href => "/users?page=2",
+                                           :content => "Next")
       end
     end
   end
@@ -182,6 +183,7 @@ describe "POST 'create'" do
    end
   end
  end
+
 describe "PUT 'update'" do
 
   before(:each) do
@@ -249,7 +251,25 @@ end
         put :update, :id => @user, :user => {}
         response.should redirect_to(signin_path)
      end
+   
+   describe "for signed-in users" do
+     before(:each) do
+       wrong_user = Factory(:user, :email => "user@example.net")
+       test_sign_in(wrong_user)
+     end
+
+      it "should require matching users for 'edit'" do
+        get :edit, :id => @user
+        response.should redirect_to(root_path)
+     end
+
+      it "should require matching users for 'update'" do
+        put :update, :id => @user, :user => {}
+        response.should redirect_to(root_path)
+      end
    end
+end
+
 describe "DELETE 'destroy'" do
 before(:each) do
 @user = Factory(:user)
